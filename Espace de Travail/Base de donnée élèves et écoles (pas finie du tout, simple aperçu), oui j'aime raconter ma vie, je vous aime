@@ -1,0 +1,107 @@
+
+
+import random
+import copy
+import unittest
+
+
+class student():
+	def __init__(self):
+		self.matieres = []
+		self.criteres = []
+
+		self.notes_matieres = {}
+		self.notes_criteres = {}
+
+		self.jugement = {}
+		self.classement = []
+
+
+	def judge(self, schools):
+		for school in schools:
+			numerateur = 0
+			denominateur = 0
+			for critere in self.criteres:
+				if critere in school.criteres:
+					note = school.notes[critere]
+					coeff = self.criteres[critere]
+					numerateur += note * coeff
+					denominateur += coeff
+			moyenne = numerateur/denominateur
+			self.jugement[school] = moyenne
+
+	def classify(self):
+		self.classement = classifyList(self.jugement)
+
+	def notes_aleatoires(self):
+		for matiere in self.matieres:
+			note_matiere = random.randrange(0, 20, 0.5)
+			self.notes_matieres[matiere] = note_matiere
+
+	def critere_aleatoires(self):
+		for critere in self.criteres:
+			note_critere = random.randrange(0, 1, 0.05)
+			self.notes_criteres[critere] = note_critere
+
+
+class school():
+	def __init__(self):
+		self.notes = {
+			"International" : 12,
+			"Prestige" : 19,
+			"Logement" : 3,
+		}
+
+		self.criteres = {
+			"Francais" : 0.8,
+			"Anglais" : 0.5,
+			"Maths" : 0.2,
+		}
+
+		self.jugement = {}
+		self.classement = []
+
+	def judge(self, students):
+		for student in students:
+			numerateur = 0
+			denominateur = 0
+			for critere in self.criteres:
+				if critere in student.criteres:
+					note = student.notes[critere]
+					coeff = self.criteres[critere]
+					numerateur += note * coeff
+					denominateur += coeff
+			moyenne = numerateur/denominateur
+			self.jugement[student] = moyenne
+
+
+
+	def classify(self):
+		self.classement = classifyList(self.jugement)
+
+
+
+
+def classifyList(listeDeNotes):
+	liste = []
+	for key, value in sorted(listeDeNotes, key=lambda item: (item[1], item[0])):
+		liste.append(key)
+			# liste est classé dans l'ordre croissant, c'est a dire de la plus petite à la plus grande moyenne
+		return liste[::-1]
+			# on inverse le sens de la liste, et on obtient ainsi la liste des etablissement de la plus grande
+			# vers la plus petite moyenne		
+
+stu = student()
+scho = school()
+
+schools = [scho]
+students = [stu]
+
+for student in students:
+	student.judge(schools)
+	student.classify()
+
+for school in schools:
+	school.judge(students)
+	school.classify()
+
